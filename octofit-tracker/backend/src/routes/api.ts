@@ -15,7 +15,7 @@ function listHandler<T>(model: Model<T>, sort: Record<string, 1 | -1> = {}): Req
     }
   };
 }
-
+// Define API routes
 router.get('/', (_request, response) => {
   response.json({ baseUrl: apiBaseUrl });
 });
