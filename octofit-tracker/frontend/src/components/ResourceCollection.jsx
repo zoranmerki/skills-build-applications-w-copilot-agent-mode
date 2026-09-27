@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { API_BASE_URL, collectionFromResponse } from '../api.js';
+import { collectionFromResponse } from '../api.js';
 
 function formatValue(value) {
   if (value === null || value === undefined || value === '') return '-';
@@ -8,7 +8,7 @@ function formatValue(value) {
   return String(value);
 }
 
-export default function ResourceCollection({ title, description, resource, columns }) {
+export default function ResourceCollection({ title, description, resource, endpoint, columns }) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -21,7 +21,7 @@ export default function ResourceCollection({ title, description, resource, colum
       setLoading(true);
       setError('');
       try {
-        const response = await fetch(`${API_BASE_URL}/${resource}/`, { signal: controller.signal });
+        const response = await fetch(endpoint, { signal: controller.signal });
         if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
         const payload = await response.json();
         setRecords(collectionFromResponse(payload));
@@ -36,7 +36,7 @@ export default function ResourceCollection({ title, description, resource, colum
 
     loadCollection();
     return () => controller.abort();
-  }, [resource, reload]);
+  }, [endpoint, resource, reload]);
 
   return (
     <section className="collection-view" aria-labelledby={`${resource}-title`}>
@@ -96,7 +96,7 @@ export default function ResourceCollection({ title, description, resource, colum
           </tbody>
         </table>
       </div>
-      <p className="endpoint-note">GET {API_BASE_URL}/{resource}/</p>
+      <p className="endpoint-note">GET {endpoint}</p>
     </section>
   );
 }
